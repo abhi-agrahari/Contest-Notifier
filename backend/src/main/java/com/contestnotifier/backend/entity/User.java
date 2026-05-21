@@ -1,37 +1,27 @@
 package com.contestnotifier.backend.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
-import java.time.LocalDateTime;
+import lombok.*;
 
 @Entity
-@Table(name = "users")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
+@Table(name = "users")
 public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true, nullable = false)
-    private String email;
-
-    @Column(nullable = false)
     private String name;
 
-    @Column(name = "google_id", unique = true)
+    @Column(unique = true)
+    private String email;
+
     private String googleId;
 
-    @Column(name = "profile_picture")
-    private String profilePicture;
-
-    @Column(name = "timezone")
-    private String timezone = "UTC";
-
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
-
+    private String timezone;
 }
