@@ -41,6 +41,8 @@ public class LeetCodeFetcher
             headers.setContentType(
                     MediaType.APPLICATION_JSON
             );
+            headers.set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36");
+            headers.set("Referer", "https://leetcode.com/contest/");
 
             HttpEntity<String> request =
                     new HttpEntity<>(query, headers);
@@ -63,6 +65,11 @@ public class LeetCodeFetcher
 
                 JSONObject item =
                         array.getJSONObject(i);
+
+                long startTimeSeconds = item.getLong("startTime");
+                if (startTimeSeconds < Instant.now().getEpochSecond()) {
+                    continue;
+                }
 
                 Contest contest =
                         Contest.builder()

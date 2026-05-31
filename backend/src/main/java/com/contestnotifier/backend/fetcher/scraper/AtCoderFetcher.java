@@ -36,26 +36,36 @@ public class AtCoderFetcher implements ContestFetcher {
 
                 Elements columns = row.select("td");
 
-                if (columns.size() < 2) {
+                if (columns.size() < 3) {
                     continue;
                 }
 
-                String name = columns.get(1).text();
+                String timeStr = columns.get(0).select("time").text();
+                LocalDateTime startTime = null;
+                try {
+                   startTime = LocalDateTime.parse(timeStr.substring(0, 19).replace(" ", "T"));
+                } catch (Exception e) {
+                   startTime = LocalDateTime.now().plusDays(1);
+                }
 
-                String url = "https://atcoder.jp"
-                                + columns.get(1)
-                                .select("a")
-                                .attr("href");
+                String name = columns.get(1).text();
+                String url = "https://atcoder.jp" + columns.get(1).select("a").attr("href");
+
+                String durationStr = columns.get(2).text();
+                long durationMinutes = 120;
+                try {
+                    String[] parts = durationStr.split(":");
+                    durationMinutes = Long.parseLong(parts[0]) * 60 + Long.parseLong(parts[1]);
+                } catch (Exception e) {}
 
                 Contest contest = Contest.builder()
                                 .platform("AtCoder")
                                 .contestId(name)
                                 .name(name)
                                 .url(url)
-                                .duration(120L)
-                                .lastUpdated(
-                                        LocalDateTime.now()
-                                )
+                                .startTime(startTime)
+                                .duration(durationMinutes)
+                                .lastUpdated(LocalDateTime.now())
                                 .build();
 
                 contests.add(contest);

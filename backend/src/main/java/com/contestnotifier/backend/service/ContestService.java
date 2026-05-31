@@ -1,11 +1,12 @@
 package com.contestnotifier.backend.service;
 
 import com.contestnotifier.backend.entity.Contest;
-import com.contestnotifier.backend.fetcher.api.CodeforcesFetcher;
+import com.contestnotifier.backend.fetcher.ContestFetcher;
 import com.contestnotifier.backend.repository.ContestRepository;
-import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -13,22 +14,52 @@ public class ContestService {
 
     private final ContestRepository contestRepository;
 
-    private final CodeforcesFetcher codeforcesFetcher;
+    private final List<ContestFetcher> fetchers;
 
-    public ContestService(ContestRepository contestRepository, CodeforcesFetcher codeforcesFetcher){
+    public ContestService(ContestRepository contestRepository, List<ContestFetcher> fetchers) {
         this.contestRepository = contestRepository;
-        this.codeforcesFetcher = codeforcesFetcher;
+        this.fetchers = fetchers;
     }
 
     public void refreshContests() {
+        LocalDateTime now = LocalDateTime.now();
+        for (ContestFetcher fetcher : fetchers) {
+            try {
+                List<Contest> contests = fetcher.fetchContests();
+                System.out.println("Fetched " + contests.size() + " contests from " + getPlatformName(fetcher));
+                
+                for (Contest contest : contests) {
+                    if (contest.getStartTime() != null && contest.getStartTime().isAfter(now)) {
+                        saveOrUpdate(contest);
+                    }
+                }
+            } catch (Exception e) {
+                System.err.println("Error fetching contests from " + getPlatformName(fetcher) + ": " + e.getMessage());
+            }
+        }
+    }
 
-        List<Contest> contests =
-                codeforcesFetcher.fetchContests();
-
-        contestRepository.saveAll(contests);
+    private void saveOrUpdate(Contest contest) {
+        contestRepository.findByPlatformAndContestId(contest.getPlatform(), contest.getContestId())
+            .ifPresentOrElse(
+                existing -> {
+                    existing.setName(contest.getName());
+                    existing.setStartTime(contest.getStartTime());
+                    existing.setDuration(contest.getDuration());
+                    existing.setUrl(contest.getUrl());
+                    existing.setLastUpdated(LocalDateTime.now());
+                    contestRepository.save(existing);
+                },
+                () -> contestRepository.save(contest)
+            );
     }
 
     public List<Contest> getAllContests() {
         return contestRepository.findAll();
+    }
+
+    private String getPlatformName(ContestFetcher fetcher) {
+        String className = fetcher.getClass().getSimpleName();
+        return className.replace("Fetcher", "");
     }
 }
