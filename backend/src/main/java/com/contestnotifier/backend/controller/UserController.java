@@ -16,8 +16,11 @@ public class UserController {
 
     @GetMapping("/me")
     public User getCurrentUser(@AuthenticationPrincipal OAuth2User principal) {
-        if (principal == null) return null;
-        String email = principal.getAttribute("email");
-        return userService.findOrCreateUser(email, null, null);
+        return userService.getUserFromPrincipal(principal);
+    }
+
+    @GetMapping("/login")
+    public User login(@AuthenticationPrincipal OAuth2User principal) {
+        return userService.getUserFromPrincipal(principal);
     }
 }
