@@ -60,6 +60,10 @@ public class PreferenceService {
         );
     }
 
+    public void deletePreference(User user, String platform) {
+        preferenceRepository.deleteByUserAndPlatform(user, platform);
+    }
+
     public List<PreferenceResponseDTO> getUserPreferences(User user) {
         List<NotificationPreference> savedPreferences = preferenceRepository.findByUser(user);
         Map<String, NotificationPreference> prefMap = savedPreferences.stream()

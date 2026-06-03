@@ -33,6 +33,27 @@ public class PreferenceController {
         return ResponseEntity.ok(response);
     }
 
+    @PostMapping("/update")
+    public ResponseEntity<List<PreferenceResponseDTO>> updatePreferences(
+            @RequestBody List<PreferenceRequestDTO> requests,
+            @AuthenticationPrincipal OAuth2User principal) {
+        User user = userService.getUserFromPrincipal(principal);
+        List<PreferenceResponseDTO> responses = new ArrayList<>();
+        for (PreferenceRequestDTO request : requests) {
+            responses.add(preferenceService.savePreference(user, request));
+        }
+        return ResponseEntity.ok(responses);
+    }
+
+    @DeleteMapping("/{platform}")
+    public ResponseEntity<String> deletePreference(
+            @PathVariable String platform,
+            @AuthenticationPrincipal OAuth2User principal) {
+        User user = userService.getUserFromPrincipal(principal);
+        preferenceService.deletePreference(user, platform);
+        return ResponseEntity.ok("Deleted " + platform);
+    }
+
     @GetMapping
     public ResponseEntity<List<PreferenceResponseDTO>> getPreferences(
             @AuthenticationPrincipal OAuth2User principal) {
