@@ -58,6 +58,13 @@ public class ContestService {
         return contestRepository.findAll();
     }
 
+    public List<Contest> getContestsByPlatforms(List<String> platforms) {
+        if (platforms == null || platforms.isEmpty()) {
+            return getAllContests();
+        }
+        return contestRepository.findByPlatformIn(platforms);
+    }
+
     private String getPlatformName(ContestFetcher fetcher) {
         String className = fetcher.getClass().getSimpleName();
         return className.replace("Fetcher", "");
