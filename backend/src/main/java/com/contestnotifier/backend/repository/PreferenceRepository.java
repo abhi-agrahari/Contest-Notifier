@@ -14,7 +14,7 @@ public interface PreferenceRepository extends JpaRepository<NotificationPreferen
 
     List<NotificationPreference> findByUser(User user);
     Optional<NotificationPreference> findByUserAndPlatform(User user, String platform);
-
+    List<NotificationPreference> findByPlatformAndEnabledTrue(String platform);
     @Transactional
     @Modifying
     void deleteByUserAndPlatform(User user, String platform);
