@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import { fetchContests } from '../api/api'
+import Logo from '../components/Logo'
 import './Home.css'
 
 const Home = () => {
@@ -33,13 +35,15 @@ const Home = () => {
   return (
     <div className="container">
       <nav className="nav">
-        <div className="logo">
-          <div className="logo-icon"></div>
-          <span>Contest Notifier</span>
+        <Link to="/">
+          <Logo size={40} />
+        </Link>
+        <div className="nav-actions">
+          <button onClick={loadContests} className="refresh-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15" /></svg>
+          </button>
+          <Link to="/login" className="login-link">Login</Link>
         </div>
-        <button onClick={loadContests} className="refresh-btn">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15" /></svg>
-        </button>
       </nav>
 
       <header className="hero">

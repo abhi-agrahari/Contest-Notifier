@@ -12,5 +12,4 @@ export const fetchContests = async () => {
 };
 
 // You can add more API calls here later:
-// export const fetchUserPreferences = async () => { ... }
-// export const updatePreferences = async (prefs) => { ... }
+export const fetchUserPreferences = async () => { /* ... */ }

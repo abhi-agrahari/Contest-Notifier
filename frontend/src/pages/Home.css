@@ -5,37 +5,12 @@
   padding: 2.5rem 0;
 }
 
-.logo {
+/* New logo component handles these styles */
+
+.nav-actions {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  font-family: 'Outfit', sans-serif;
-  font-weight: 800;
-  font-size: 1.5rem;
-  background: var(--gradient-primary);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.logo-icon {
-  width: 36px;
-  height: 36px;
-  background: var(--gradient-primary);
-  border-radius: 10px;
-  position: relative;
-  box-shadow: var(--glow-primary);
-}
-
-.logo-icon::after {
-  content: '';
-  position: absolute;
-  top: 8px;
-  left: 8px;
-  width: 12px;
-  height: 12px;
-  background: white;
-  border-radius: 3px;
-  opacity: 0.9;
+  gap: 1.5rem;
 }
 
 .refresh-btn {
@@ -53,23 +28,40 @@
 }
 
 .refresh-btn:hover {
-  background: var(--primary-glow);
+  background: rgba(255, 255, 255, 0.05);
   transform: rotate(180deg);
   border-color: var(--p-500);
 }
 
+.login-link {
+  font-weight: 700;
+  color: var(--text);
+  padding: 0.75rem 1.5rem;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border);
+  transition: all 0.3s ease;
+}
+
+.login-link:hover {
+  background: var(--gradient-primary);
+  border-color: transparent;
+  box-shadow: var(--glow-primary);
+  transform: translateY(-2px);
+}
+
 .hero {
-  padding: 6rem 0 4rem;
+  padding: 3rem 0 2rem;
   text-align: center;
 }
 
 .hero h1 {
   font-family: 'Outfit', sans-serif;
-  font-size: 4.5rem;
+  font-size: 2.5rem;
   font-weight: 800;
-  letter-spacing: -0.05em;
-  line-height: 1;
-  margin-bottom: 1.5rem;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+  margin-bottom: 0.75rem;
   background: linear-gradient(to bottom, #fff 40%, rgba(255,255,255,0.7) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -77,8 +69,8 @@
 
 .hero p {
   color: var(--text-muted);
-  font-size: 1.4rem;
-  max-width: 600px;
+  font-size: 1.1rem;
+  max-width: 500px;
   margin: 0 auto;
   font-weight: 500;
 }
