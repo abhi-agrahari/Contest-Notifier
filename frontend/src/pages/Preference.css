@@ -1,0 +1,134 @@
+.pref-main {
+  max-width: 800px;
+  margin: 0 auto;
+  padding-bottom: 5rem;
+}
+
+.pref-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.pref-card, .global-toggle-card {
+  background: var(--surface);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 1.5rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.3s ease;
+}
+
+.global-toggle-card {
+    margin-bottom: 3rem;
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+    border-color: rgba(99, 102, 241, 0.3);
+}
+
+.pref-card.active {
+  border-color: var(--p-500);
+  background: rgba(99, 102, 241, 0.05);
+}
+
+.pref-info h3 {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.25rem;
+  margin-bottom: 0.25rem;
+}
+
+.pref-info p {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.pref-controls {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.time-select {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.time-select select {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  outline: none;
+}
+
+.time-select select:focus {
+  border-color: var(--p-500);
+}
+
+.toggle-btn {
+  padding: 0.75rem 1.5rem;
+  border-radius: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: none;
+}
+
+.toggle-btn.off {
+  background: white;
+  color: black;
+}
+
+.toggle-btn.on {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.toggle-btn.on:hover {
+  background: #ef4444;
+  color: white;
+}
+
+.toggle-btn.off:hover {
+  background: var(--gradient-primary);
+  color: white;
+  box-shadow: var(--glow-primary);
+  transform: translateY(-2px);
+}
+
+.back-link {
+  color: var(--text);
+  font-weight: 700;
+  padding: 0.75rem 1.25rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.back-link:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateX(-4px);
+  border-color: var(--text-muted);
+}
+
+@media (max-width: 600px) {
+  .pref-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.5rem;
+  }
+  
+  .pref-controls {
+    width: 100%;
+    justify-content: space-between;
+  }
+}

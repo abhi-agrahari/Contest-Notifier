@@ -43,6 +43,18 @@
   transition: all 0.3s ease;
 }
 
+.pref-link {
+  font-weight: 600;
+  color: var(--text-muted);
+  transition: all 0.3s ease;
+  padding: 0.5rem;
+}
+
+.pref-link:hover {
+  color: white;
+  transform: translateY(-1px);
+}
+
 .login-link:hover {
   background: var(--gradient-primary);
   border-color: transparent;
