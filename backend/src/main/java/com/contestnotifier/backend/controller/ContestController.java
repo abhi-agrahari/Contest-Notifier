@@ -2,6 +2,7 @@ package com.contestnotifier.backend.controller;
 
 import com.contestnotifier.backend.entity.Contest;
 import com.contestnotifier.backend.service.ContestService;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,6 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/contests")
+@CrossOrigin(origins = "http://localhost:5173")
 public class ContestController {
 
     private final ContestService contestService;

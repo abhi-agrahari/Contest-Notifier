@@ -48,7 +48,7 @@ public class NotificationService {
 
             for (NotificationPreference preference : preferences) {
                 User user = preference.getUser();
-                if (user == null) continue;
+                if (user == null || !user.isEmailNotificationsEnabled()) continue;
 
                 long minutesLeft = Duration.between(now, contest.getStartTime()).toMinutes();
 

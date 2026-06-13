@@ -61,4 +61,18 @@ public class PreferenceController {
         List<PreferenceResponseDTO> preferences = preferenceService.getUserPreferences(user);
         return ResponseEntity.ok(preferences);
     }
+
+    @GetMapping("/notifications")
+    public ResponseEntity<Boolean> getNotificationSetting(@AuthenticationPrincipal OAuth2User principal) {
+        User user = userService.getUserFromPrincipal(principal);
+        return ResponseEntity.ok(user.isEmailNotificationsEnabled());
+    }
+
+    @PostMapping("/notifications")
+    public ResponseEntity<Boolean> updateNotificationSetting(@RequestBody boolean enabled, @AuthenticationPrincipal OAuth2User principal) {
+        User user = userService.getUserFromPrincipal(principal);
+        user.setEmailNotificationsEnabled(enabled);
+        userService.saveUser(user);
+        return ResponseEntity.ok(user.isEmailNotificationsEnabled());
+    }
 }
