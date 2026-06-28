@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ContestService {
@@ -68,5 +70,11 @@ public class ContestService {
     private String getPlatformName(ContestFetcher fetcher) {
         String className = fetcher.getClass().getSimpleName();
         return className.replace("Fetcher", "");
+    }
+
+    @Scheduled(cron = "0 0 0 * * *")
+    @Transactional
+    public void cleanupOldContests() {
+        contestRepository.deleteOldContests();
     }
 }
