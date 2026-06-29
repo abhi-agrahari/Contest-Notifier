@@ -13,7 +13,11 @@ import java.util.List;
 @Component
 public class CodeforcesRatingFetcher {
 
-    private final RestTemplate restTemplate = new RestTemplate();
+    private final RestTemplate restTemplate;
+
+    public CodeforcesRatingFetcher(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
 
     public RatingDTO fetch(String handle) {
 
@@ -40,8 +44,6 @@ public class CodeforcesRatingFetcher {
 
         dto.setCurrentRating(user.optInt("rating", 0));
         dto.setMaxRating(user.optInt("maxRating", 0));
-        dto.setRank(user.optString("rank", "Unrated"));
-        dto.setMaxRank(user.optString("maxRank", "Unrated"));
 
         // getting rating history
         String ratingUrl =

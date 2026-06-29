@@ -19,10 +19,6 @@ public class RatingDTO {
 
     private Integer maxRating;
 
-    private String rank;
-
-    private String maxRank;
-
     private List<Integer> lastFiveRatings;
 
     private List<String> lastFiveContests;

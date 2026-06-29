@@ -24,4 +24,13 @@ public class RatingController {
 
         return ResponseEntity.ok(rating);
     }
+
+    @GetMapping("/leetcode/{username}")
+    public ResponseEntity<RatingDTO> getLeetCodeRating(
+            @PathVariable String username) {
+
+        return ResponseEntity.ok(
+                ratingService.getLeetCodeRating(username)
+        );
+    }
 }

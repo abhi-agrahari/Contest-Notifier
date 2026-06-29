@@ -15,11 +15,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class LeetCodeFetcher
-        implements ContestFetcher {
+public class LeetCodeFetcher implements ContestFetcher {
 
-    private final RestTemplate restTemplate =
-            new RestTemplate();
+    private final RestTemplate restTemplate;
+
+    public LeetCodeFetcher(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
 
     @Override
     public List<Contest> fetchContests() {

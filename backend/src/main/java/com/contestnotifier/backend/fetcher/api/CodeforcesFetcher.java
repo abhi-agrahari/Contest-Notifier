@@ -16,8 +16,11 @@ import java.util.List;
 @Component
 public class CodeforcesFetcher implements ContestFetcher {
 
-    private final RestTemplate restTemplate =
-            new RestTemplate();
+    private final RestTemplate restTemplate;
+
+    public CodeforcesFetcher(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
 
     @Override
     public List<Contest> fetchContests() {
