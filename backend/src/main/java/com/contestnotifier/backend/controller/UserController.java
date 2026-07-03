@@ -1,5 +1,6 @@
 package com.contestnotifier.backend.controller;
 
+import com.contestnotifier.backend.dto.HandleRequestDTO;
 import com.contestnotifier.backend.entity.User;
 import com.contestnotifier.backend.service.UserService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -24,5 +25,13 @@ public class UserController {
     @GetMapping("/login")
     public User login(@AuthenticationPrincipal OAuth2User principal) {
         return userService.getUserFromPrincipal(principal);
+    }
+
+    @PostMapping("/handles")
+    public User updateHandles(@RequestBody HandleRequestDTO request, @AuthenticationPrincipal OAuth2User principal) {
+        User user = userService.getUserFromPrincipal(principal);
+        user.setLeetcodeHandle(request.getLeetcodeHandle());
+        user.setCodeforcesHandle(request.getCodeforcesHandle());
+        return userService.saveUser(user);
     }
 }

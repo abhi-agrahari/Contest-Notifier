@@ -17,7 +17,12 @@ public class RecommendationService {
 
     public String recommend(String cfHandle, String lcUsername) {
 
+        if (cfHandle == null || cfHandle.isEmpty() || lcUsername == null || lcUsername.isEmpty()) {
+            return "{\"recommended\": [], \"message\": \"Please set your Codeforces and LeetCode handles in settings for personalized recommendations.\"}";
+        }
+
         RatingDTO cf = ratingService.getCodeforcesRating(cfHandle);
+
 
         RatingDTO lc = ratingService.getLeetCodeRating(lcUsername);
 
@@ -83,7 +88,20 @@ public class RecommendationService {
                 }
                 """);
 
-        return geminiService.getRecommendation(prompt.toString());
+        String response = geminiService.getRecommendation(prompt.toString());
+        
+        // Clean up markdown code blocks if present
+        if (response.startsWith("```json")) {
+            response = response.substring(7);
+        } else if (response.startsWith("```")) {
+            response = response.substring(3);
+        }
+        
+        if (response.endsWith("```")) {
+            response = response.substring(0, response.length() - 3);
+        }
+        
+        return response.trim();
 
     }
 

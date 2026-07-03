@@ -27,4 +27,8 @@ public class User {
 
     @Builder.Default
     private boolean emailNotificationsEnabled = true;
+
+    private String leetcodeHandle;
+
+    private String codeforcesHandle;
 }

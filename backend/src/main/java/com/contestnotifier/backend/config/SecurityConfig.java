@@ -34,8 +34,8 @@ public class SecurityConfig {
                                 .exceptionHandling(exception -> exception
                                                 .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
                                 .authorizeHttpRequests(auth -> auth
-                                                .requestMatchers("/api/contests/**", "/api/rating/**", "/api/recommendation").permitAll()
-                                                .requestMatchers("/api/preferences/**", "/api/user/**").authenticated()
+                                                .requestMatchers("/api/contests/**", "/api/rating/**").permitAll()
+                                                .requestMatchers("/api/preferences/**", "/api/user/**", "/api/recommendation").authenticated()
                                                 .anyRequest().permitAll())
                                 .oauth2Login(oauth2 -> oauth2
                                                 .userInfoEndpoint(userInfo -> userInfo
