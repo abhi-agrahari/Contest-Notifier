@@ -211,3 +211,88 @@
   .hero h1 { font-size: 3rem; }
   .grid { grid-template-columns: 1fr; }
 }
+
+.recommend-cta {
+    margin-top: 2rem;
+    padding: 1rem 2rem;
+    background: var(--gradient-primary);
+    color: white;
+    border: none;
+    border-radius: 16px;
+    font-weight: 700;
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: var(--glow-primary);
+}
+
+.recommend-cta:hover {
+    transform: translateY(-4px) scale(1.05);
+    filter: brightness(1.1);
+}
+
+.recommend-cta:disabled {
+    opacity: 0.7;
+    cursor: wait;
+    transform: none;
+}
+
+.recommendations-row {
+    margin: 4rem 0 6rem;
+    padding: 3rem;
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+    border: 1px solid rgba(99, 102, 241, 0.2);
+    border-radius: 32px;
+    backdrop-filter: blur(16px);
+}
+
+.recommendations-row h2 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.75rem;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.recommendation-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+}
+
+.rec-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 2rem;
+    border-radius: 20px;
+    transition: all 0.3s ease;
+}
+
+.rec-card:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: var(--p-500);
+}
+
+.rec-card h4 {
+    color: var(--p-400);
+    margin-bottom: 0.75rem;
+    font-size: 1.2rem;
+}
+
+.rec-card p {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+}
+
+.no-rec {
+    grid-column: 1 / -1;
+    text-align: center;
+    color: var(--text-muted);
+    padding: 2rem;
+}
+
+.no-rec a {
+    color: var(--p-400);
+    text-decoration: underline;
+}

@@ -1,6 +1,14 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { fetchUserPreferences, saveUserPreference, deleteUserPreference, fetchNotificationSetting, updateNotificationSetting } from '../api/api';
+import { 
+  fetchUserPreferences, 
+  saveUserPreference, 
+  deleteUserPreference, 
+  fetchNotificationSetting, 
+  updateNotificationSetting,
+  fetchUserProfile,
+  updateUserHandles
+} from '../api/api';
 import Logo from '../components/Logo';
 import './Preference.css';
 
@@ -17,6 +25,8 @@ const PLATFORMS = [
 const Preference = () => {
   const [preferences, setPreferences] = useState({});
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+  const [leetcodeHandle, setLeetcodeHandle] = useState('');
+  const [codeforcesHandle, setCodeforcesHandle] = useState('');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
@@ -29,12 +39,15 @@ const Preference = () => {
   const loadPreferences = async () => {
     try {
       setLoading(true);
-      const [data, setting] = await Promise.all([
+      const [data, setting, profile] = await Promise.all([
         fetchUserPreferences(),
-        fetchNotificationSetting()
+        fetchNotificationSetting(),
+        fetchUserProfile()
       ]);
       
       setNotificationsEnabled(setting);
+      setLeetcodeHandle(profile.leetcodeHandle || '');
+      setCodeforcesHandle(profile.codeforcesHandle || '');
       
       const prefMap = {};
       data.forEach(p => {
@@ -52,6 +65,22 @@ const Preference = () => {
       }
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleUpdateHandles = async (e) => {
+    e.preventDefault();
+    try {
+      setSaving(true);
+      await updateUserHandles({
+        leetcodeHandle,
+        codeforcesHandle
+      });
+      // Optional: show success message
+    } catch (err) {
+      setError("Failed to update handles");
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -143,6 +172,36 @@ const Preference = () => {
                 >
                     {notificationsEnabled ? 'Notifications On' : 'Notifications Off'}
                 </button>
+            </div>
+        )}
+
+        {!loading && !error && (
+            <div className="global-toggle-card developer-handles-card">
+                <div className="pref-info">
+                    <h3>Developer Handles</h3>
+                    <p>Set your handles for personalized recommendations</p>
+                </div>
+                <form onSubmit={handleUpdateHandles} className="handles-form">
+                    <div className="handle-input-group">
+                        <input 
+                            type="text" 
+                            placeholder="Codeforces Handle" 
+                            value={codeforcesHandle}
+                            onChange={(e) => setCodeforcesHandle(e.target.value)}
+                            disabled={saving}
+                        />
+                        <input 
+                            type="text" 
+                            placeholder="LeetCode Username" 
+                            value={leetcodeHandle}
+                            onChange={(e) => setLeetcodeHandle(e.target.value)}
+                            disabled={saving}
+                        />
+                    </div>
+                    <button type="submit" className="save-handles-btn" disabled={saving}>
+                        {saving ? 'Saving...' : 'Save Handles'}
+                    </button>
+                </form>
             </div>
         )}
 

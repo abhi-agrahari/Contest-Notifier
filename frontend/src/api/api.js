@@ -88,3 +88,51 @@ export const updateNotificationSetting = async (enabled) => {
     throw error;
   }
 };
+
+export const updateUserHandles = async (handles) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/user/handles`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(handles),
+      credentials: 'include'
+    });
+    if (!response.ok) throw new Error('Failed to update handles');
+    return await response.json();
+  } catch (error) {
+    console.error('API Error:', error);
+    throw error;
+  }
+};
+
+export const fetchUserProfile = async () => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/user/me`, {
+            credentials: 'include'
+        });
+        if (!response.ok) {
+            if (response.status === 401) throw new Error('Unauthorized');
+            throw new Error('Failed to fetch user profile');
+        }
+        return await response.json();
+    } catch (error) {
+        console.error('API Error:', error);
+        throw error;
+    }
+};
+
+export const fetchRecommendations = async () => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/recommendation`, {
+            credentials: 'include'
+        });
+        if (!response.ok) {
+            if (response.status === 401) throw new Error('Unauthorized');
+            throw new Error('Failed to fetch recommendations');
+        }
+        return await response.json();
+    } catch (error) {
+        console.error('API Error:', error);
+        throw error;
+    }
+};

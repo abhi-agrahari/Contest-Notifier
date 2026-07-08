@@ -4,10 +4,9 @@ import Logo from '../components/Logo';
 import './Login.css';
 
 const Login = () => {
-    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
+    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
     const handleGoogleLogin = () => {
-        // Redirect to Spring Boot OAuth2 authorization endpoint
         window.location.href = `${API_BASE_URL}/oauth2/authorization/google`;
     };
 

@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { fetchContests } from '../api/api'
+import { fetchContests, fetchRecommendations } from '../api/api'
 import Logo from '../components/Logo'
 import './Home.css'
 
 const Home = () => {
   const [contests, setContests] = useState([]);
+  const [recommendations, setRecommendations] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [recLoading, setRecLoading] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -23,6 +25,19 @@ const Home = () => {
       setError(err.message);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const getRecommendations = async () => {
+    try {
+      setRecLoading(true);
+      const data = await fetchRecommendations();
+      setRecommendations(data.recommended || []);
+    } catch (err) {
+      console.error(err);
+      // Fail silently for user or show message
+    } finally {
+      setRecLoading(false);
     }
   };
 
@@ -50,7 +65,28 @@ const Home = () => {
       <header className="hero">
         <h1>Stay Ahead of the Competition</h1>
         <p>Real-time contest schedule from all major platforms in one place.</p>
+        <button onClick={getRecommendations} className="recommend-cta" disabled={recLoading}>
+          {recLoading ? 'Analyzing...' : 'Get AI Recommendation ✨'}
+        </button>
       </header>
+
+      {recommendations && (
+        <section className="recommendations-row">
+          <h2>Recommended for You</h2>
+          <div className="recommendation-grid">
+            {recommendations.length > 0 ? (
+                recommendations.map((rec, i) => (
+                    <div key={i} className="rec-card">
+                        <h4>{rec.contest}</h4>
+                        <p>{rec.reason}</p>
+                    </div>
+                ))
+            ) : (
+                <p className="no-rec">Set your handles in <Link to="/preferences">Preferences</Link> to get personalized recommendations.</p>
+            )}
+          </div>
+        </section>
+      )}
 
       <main>
         {loading ? (

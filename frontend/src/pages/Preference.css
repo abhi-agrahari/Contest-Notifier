@@ -132,3 +132,72 @@
     justify-content: space-between;
   }
 }
+
+.developer-handles-card {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 2rem;
+}
+
+.handles-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    flex: 1;
+}
+
+.handle-input-group {
+    display: flex;
+    gap: 1rem;
+}
+
+.handle-input-group input {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: white;
+    padding: 0.75rem 1rem;
+    border-radius: 12px;
+    flex: 1;
+    min-width: 0;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.handle-input-group input:focus {
+    border-color: var(--p-500);
+    background: rgba(99, 102, 241, 0.05);
+}
+
+.save-handles-btn {
+    background: var(--gradient-primary);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 12px;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: var(--glow-primary);
+}
+
+.save-handles-btn:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.1);
+}
+
+.save-handles-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+@media (max-width: 800px) {
+    .developer-handles-card {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .handle-input-group {
+        flex-direction: column;
+    }
+}
