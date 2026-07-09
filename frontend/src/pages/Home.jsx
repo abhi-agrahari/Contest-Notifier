@@ -1,14 +1,12 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { fetchContests, fetchRecommendations } from '../api/api'
+import { fetchContests } from '../api/api'
 import Logo from '../components/Logo'
 import './Home.css'
 
 const Home = () => {
   const [contests, setContests] = useState([]);
-  const [recommendations, setRecommendations] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [recLoading, setRecLoading] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -28,19 +26,6 @@ const Home = () => {
     }
   };
 
-  const getRecommendations = async () => {
-    try {
-      setRecLoading(true);
-      const data = await fetchRecommendations();
-      setRecommendations(data.recommended || []);
-    } catch (err) {
-      console.error(err);
-      // Fail silently for user or show message
-    } finally {
-      setRecLoading(false);
-    }
-  };
-
   const formatDate = (date) => {
     return new Date(date).toLocaleDateString(undefined, {
       month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
@@ -54,9 +39,8 @@ const Home = () => {
           <Logo size={40} />
         </Link>
         <div className="nav-actions">
-          <button onClick={loadContests} className="refresh-btn">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15" /></svg>
-          </button>
+
+          <Link to="/recommendation" className="pref-link">Recommendations</Link>
           <Link to="/preferences" className="pref-link">Preferences</Link>
           <Link to="/login" className="login-link">Login</Link>
         </div>
@@ -65,30 +49,13 @@ const Home = () => {
       <header className="hero">
         <h1>Stay Ahead of the Competition</h1>
         <p>Real-time contest schedule from all major platforms in one place.</p>
-        <button onClick={getRecommendations} className="recommend-cta" disabled={recLoading}>
-          {recLoading ? 'Analyzing...' : 'Get AI Recommendation ✨'}
-        </button>
+        <Link to="/recommendation" className="recommend-cta">
+          Get AI Recommendation ✨
+        </Link>
       </header>
 
-      {recommendations && (
-        <section className="recommendations-row">
-          <h2>Recommended for You</h2>
-          <div className="recommendation-grid">
-            {recommendations.length > 0 ? (
-                recommendations.map((rec, i) => (
-                    <div key={i} className="rec-card">
-                        <h4>{rec.contest}</h4>
-                        <p>{rec.reason}</p>
-                    </div>
-                ))
-            ) : (
-                <p className="no-rec">Set your handles in <Link to="/preferences">Preferences</Link> to get personalized recommendations.</p>
-            )}
-          </div>
-        </section>
-      )}
-
       <main>
+
         {loading ? (
           <div className="loader-box">
             <div className="pulse"></div>

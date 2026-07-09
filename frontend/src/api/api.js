@@ -136,3 +136,30 @@ export const fetchRecommendations = async () => {
         throw error;
     }
 };
+
+export const fetchCodeforcesRating = async (handle) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/rating/codeforces/${handle}`, {
+      credentials: 'include'
+    });
+    if (!response.ok) throw new Error('Failed to fetch Codeforces rating');
+    return await response.json();
+  } catch (error) {
+    console.error('API Error:', error);
+    throw error;
+  }
+};
+
+export const fetchLeetCodeRating = async (username) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/rating/leetcode/${username}`, {
+      credentials: 'include'
+    });
+    if (!response.ok) throw new Error('Failed to fetch LeetCode rating');
+    return await response.json();
+  } catch (error) {
+    console.error('API Error:', error);
+    throw error;
+  }
+};
+

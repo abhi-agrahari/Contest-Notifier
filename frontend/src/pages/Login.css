@@ -47,28 +47,31 @@
 
 .back-link {
     position: absolute;
-    left: -1rem;
-    top: -1rem;
-    width: 40px;
-    height: 40px;
+    left: 1.25rem;
+    top: 1.25rem;
+    width: 36px;
+    height: 36px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 12px;
-    color: var(--text-muted);
-    transition: all 0.3s ease;
-    border: 1px solid transparent;
+    border-radius: 50%;
+    color: #ffffff;
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    border: 1px solid rgba(255,255,255,0.2);
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
 }
 
 .back-link:hover {
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.08);
     color: var(--text);
-    border-color: var(--border);
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: rotate(90deg);
 }
 
 .back-link svg {
-    width: 20px;
-    height: 20px;
+    width: 16px;
+    height: 16px;
 }
 
 .login-logo-wrapper {

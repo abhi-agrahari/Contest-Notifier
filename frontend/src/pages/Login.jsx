@@ -13,12 +13,13 @@ const Login = () => {
     return (
         <div className="login-container">
             <div className="login-card">
+                <Link to="/" className="back-link" title="Close">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </Link>
                 <div className="login-header">
-                    <Link to="/" className="back-link">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <path d="M19 12H5M12 19l-7-7 7-7" />
-                        </svg>
-                    </Link>
                     <div className="login-logo-wrapper">
                         <Logo size={64} showText={false} />
                     </div>
