@@ -11,10 +11,12 @@ import java.util.Optional;
 
 public interface ContestRepository extends JpaRepository<Contest, Long> {
     Optional<Contest> findByPlatformAndContestId(String platform, String contestId);
-    List<Contest> findByPlatformIn(List<String> platforms);
+    List<Contest> findByPlatformInOrderByStartTimeAsc(List<String> platforms);
+    List<Contest> findAllByOrderByStartTimeAsc();
     
     @Modifying
     @Transactional
-    @Query(value = "DELETE FROM contest WHERE start_time IS NULL OR DATE_ADD(start_time, INTERVAL duration MINUTE) < NOW()", nativeQuery = true)
+    // query to delete past contests
+    @Query(value = "DELETE FROM contest WHERE start_time IS NULL OR DATE_ADD(start_time, INTERVAL duration MINUTE) <= NOW()", nativeQuery = true)
     void deleteOldContests();
 }

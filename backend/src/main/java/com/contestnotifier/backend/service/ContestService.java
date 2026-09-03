@@ -23,6 +23,8 @@ public class ContestService {
         this.fetchers = fetchers;
     }
 
+    // refresh upcoming contests
+    @Scheduled(cron = "0 0 1 * * ?")
     public void refreshContests() {
         LocalDateTime now = LocalDateTime.now();
         for (ContestFetcher fetcher : fetchers) {
@@ -41,6 +43,7 @@ public class ContestService {
         }
     }
 
+    // save and update contest in database
     private void saveOrUpdate(Contest contest) {
         contestRepository.findByPlatformAndContestId(contest.getPlatform(), contest.getContestId())
             .ifPresentOrElse(
@@ -57,21 +60,23 @@ public class ContestService {
     }
 
     public List<Contest> getAllContests() {
-        return contestRepository.findAll();
+        return contestRepository.findAllByOrderByStartTimeAsc();
     }
 
     public List<Contest> getContestsByPlatforms(List<String> platforms) {
         if (platforms == null || platforms.isEmpty()) {
             return getAllContests();
         }
-        return contestRepository.findByPlatformIn(platforms);
+        return contestRepository.findByPlatformInOrderByStartTimeAsc(platforms);
     }
 
+    // get all platform names
     private String getPlatformName(ContestFetcher fetcher) {
         String className = fetcher.getClass().getSimpleName();
         return className.replace("Fetcher", "");
     }
 
+    // delete all old contests from database
     @Scheduled(cron = "0 0 0 * * *")
     @Transactional
     public void cleanupOldContests() {
