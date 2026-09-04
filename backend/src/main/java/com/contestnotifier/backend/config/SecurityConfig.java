@@ -1,6 +1,9 @@
 package com.contestnotifier.backend.config;
 
 import com.contestnotifier.backend.security.CustomOAuth2UserService;
+import com.contestnotifier.backend.security.JwtAuthenticationFilter;
+import com.contestnotifier.backend.security.JwtAuthenticationSuccessHandler;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -11,6 +14,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.util.Arrays;
 import java.util.List;
@@ -18,10 +22,19 @@ import java.util.List;
 @Configuration
 public class SecurityConfig {
 
-    private final CustomOAuth2UserService customOAuth2UserService;
+    @Value("${app.frontend-url}")
+    private String frontendUrl;
 
-    public SecurityConfig(CustomOAuth2UserService customOAuth2UserService) {
+    private final CustomOAuth2UserService customOAuth2UserService;
+        private final JwtAuthenticationFilter jwtAuthenticationFilter;
+        private final JwtAuthenticationSuccessHandler jwtAuthenticationSuccessHandler;
+
+        public SecurityConfig(CustomOAuth2UserService customOAuth2UserService,
+                                                  JwtAuthenticationFilter jwtAuthenticationFilter,
+                                                  JwtAuthenticationSuccessHandler jwtAuthenticationSuccessHandler) {
         this.customOAuth2UserService = customOAuth2UserService;
+                this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+                this.jwtAuthenticationSuccessHandler = jwtAuthenticationSuccessHandler;
     }
 
     @Bean
@@ -32,7 +45,7 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 // disable CSRF
                 .csrf(csrf -> csrf.disable())
-                // Handle unauthorized requests
+                // handle unauthorized requests
                 .exceptionHandling(exception -> exception
                         .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
                 .authorizeHttpRequests(auth -> auth
@@ -43,13 +56,15 @@ public class SecurityConfig {
                 .oauth2Login(oauth2 -> oauth2
                         .userInfoEndpoint(userInfo -> userInfo
                                 .userService(customOAuth2UserService))
-                        .defaultSuccessUrl("http://localhost:5173", true)
-                        .failureUrl("http://localhost:5173/login?error=true"))
-                // Logout configuration
+                        .successHandler(jwtAuthenticationSuccessHandler)
+                        .failureUrl(frontendUrl + "/login?error=true"))
+                // logout configuration
                 .logout(logout -> logout
-                        .logoutSuccessUrl("http://localhost:5173")
+                        .logoutSuccessUrl(frontendUrl)
                         .invalidateHttpSession(true)
-                        .deleteCookies("JSESSIONID"));
+                        .deleteCookies("JSESSIONID", "JWT"));
+
+                http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

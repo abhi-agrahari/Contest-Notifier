@@ -33,6 +33,7 @@ public class NotificationService {
         this.emailService = emailService;
     }
 
+    // scheduler to send email notifications before contest
     @Scheduled(cron = "0 * * * * *")
     public void processNotifications() {
         List<Contest> contests = contestRepository.findAll();
@@ -52,7 +53,8 @@ public class NotificationService {
 
                 long minutesLeft = Duration.between(now, contest.getStartTime()).toMinutes();
 
-                if (minutesLeft == preference.getNotifyBeforeMinutes()) {
+                // the scheduler is comparing range check keeps notifications reliable
+                if (minutesLeft >= 0 && minutesLeft <= preference.getNotifyBeforeMinutes()) {
                     boolean alreadySent = logRepository.existsByUserIdAndContestId(user.getId(), contest.getId());
 
                     if (!alreadySent) {
