@@ -1,69 +1,189 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@600;800&display=swap');
-
 :root {
-  /* Aurora Color Palette */
-  --p-600: #6366f1; /* Indigo */
-  --p-500: #818cf8;
-  --s-600: #ec4899; /* Pink */
-  --a-600: #8b5cf6; /* Violet */
-  
-  --bg: #030712; /* Deep Obsidian */
-  --surface: rgba(17, 24, 39, 0.7);
-  --text: #f9fafb;
-  --text-muted: #9ca3af;
-  --border: rgba(255, 255, 255, 0.08);
-  
-  --gradient-primary: linear-gradient(135deg, var(--p-600) 0%, var(--a-600) 100%);
-  --glow-primary: 0 0 20px rgba(99, 102, 241, 0.4);
+  --bg: #f8f9fa;
+  --surface: #ffffff;
+  --text: #212529;
+  --text-muted: #6c757d;
+  --border: #dee2e6;
+  --primary: #0d6efd;
+  --primary-hover: #0b5ed7;
+  --danger: #dc3545;
+  --success: #198754;
+  --card-bg: #ffffff;
+  --radius: 12px;
+}
+
+[data-theme='dark'] {
+  --bg: #121212;
+  --surface: #1e1e1e;
+  --text: #e9ecef;
+  --text-muted: #adb5bd;
+  --border: #343a40;
+  --primary: #3d8bfd;
+  --primary-hover: #0d6efd;
+  --danger: #ea868f;
+  --success: #75b798;
+  --card-bg: #1e1e1e;
 }
 
 * {
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
 }
 
 body {
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   background-color: var(--bg);
   color: var(--text);
-  line-height: 1.6;
-  -webkit-font-smoothing: antialiased;
+  line-height: 1.5;
   min-height: 100vh;
-  position: relative;
-  overflow-x: hidden;
-}
-
-/* Aurora Backdrop */
-body::before {
-  content: "";
-  position: fixed;
-  top: -10%;
-  left: -10%;
-  width: 120%;
-  height: 120%;
-  background: 
-    radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 40%),
-    radial-gradient(circle at 90% 80%, rgba(236, 72, 153, 0.15) 0%, transparent 40%),
-    radial-gradient(circle at 50% 50%, rgba(139, 92, 246, 0.1) 0%, transparent 50%);
-  z-index: -1;
-  filter: blur(80px);
 }
 
 .container {
-  max-width: 1200px;
+  max-width: 1000px;
   margin: 0 auto;
-  padding: 0 2rem;
+  padding: 1.25rem;
 }
 
 a {
+  color: var(--primary);
   text-decoration: none;
-  color: inherit;
 }
 
-button {
-  background: none;
-  border: none;
-  cursor: pointer;
+a:hover {
+  text-decoration: underline;
+}
+
+button, input, select {
   font-family: inherit;
+  font-size: 0.95rem;
+}
+
+/* Modern, Clean & Rounded Navbar */
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.85rem 1.25rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  font-size: 1.15rem;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.nav-brand:hover {
+  text-decoration: none;
+  opacity: 0.9;
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.mobile-nav-toggle {
+  display: none;
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  padding: 0.4rem 0.75rem;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.mobile-nav-toggle:hover {
+  background: var(--border);
+}
+
+@media (max-width: 700px) {
+  .mobile-nav-toggle {
+    display: block;
+  }
+  .nav-actions {
+    display: none;
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+    padding-top: 0.75rem;
+    gap: 0.5rem;
+  }
+  .nav-actions.open {
+    display: flex;
+  }
+  .nav-actions a, .nav-actions button {
+    text-align: center;
+    width: 100%;
+  }
+}
+
+/* Consistent Buttons with rounded corners */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.45rem 0.95rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-weight: 500;
+  font-size: 0.9rem;
+  text-align: center;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+  cursor: pointer;
+}
+
+.btn:hover {
+  background: var(--border);
+  text-decoration: none;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: #ffffff;
+  border-color: var(--primary);
+}
+
+.btn-primary:hover {
+  background: var(--primary-hover);
+  border-color: var(--primary-hover);
+  color: #ffffff;
+}
+
+.btn-danger {
+  background: var(--surface);
+  color: var(--danger);
+  border-color: var(--danger);
+}
+
+.btn-danger:hover {
+  background: var(--danger);
+  color: #ffffff;
+}
+
+.theme-toggle {
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  padding: 0.45rem 0.85rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.theme-toggle:hover {
+  background: var(--border);
 }

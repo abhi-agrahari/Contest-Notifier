@@ -1,17 +1,32 @@
-import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
-import { fetchContests } from '../api/api'
-import Logo from '../components/Logo'
-import './Home.css'
+import { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { fetchContests, fetchUserProfile, refreshContests, logoutUser } from '../api/api';
+import Logo from '../components/Logo';
+import ThemeToggle from '../components/ThemeToggle';
+import './Home.css';
 
-const Home = () => {
+function Home() {
   const [contests, setContests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     loadContests();
+    checkAuthStatus();
   }, []);
+
+  const checkAuthStatus = async () => {
+    try {
+      await fetchUserProfile();
+      setIsLoggedIn(true);
+    } catch {
+      setIsLoggedIn(false);
+    }
+  };
 
   const loadContests = async () => {
     try {
@@ -20,68 +35,133 @@ const Home = () => {
       setContests(data);
       setError(null);
     } catch (err) {
-      setError(err.message);
+      setError(err.message || 'Failed to load contests');
     } finally {
       setLoading(false);
     }
   };
 
-  const formatDate = (date) => {
-    return new Date(date).toLocaleDateString(undefined, {
-      month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+  const handleRefresh = async () => {
+    try {
+      setRefreshing(true);
+      await refreshContests();
+      await loadContests();
+    } catch (err) {
+      setError(err.message || 'Failed to refresh contests');
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await logoutUser();
+    } finally {
+      setIsLoggedIn(false);
+      navigate('/login');
+    }
+  };
+
+  const formatDate = (dateStr) => {
+    return new Date(dateStr).toLocaleString(undefined, {
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
     });
+  };
+
+  const formatDuration = (minutes) => {
+    const hrs = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    return `${hrs}h ${mins}m`;
   };
 
   return (
     <div className="container">
       <nav className="nav">
-        <Link to="/">
-          <Logo size={40} />
+        <Link to="/" className="nav-brand">
+          <Logo />
         </Link>
-        <div className="nav-actions">
+        
+        <button
+          type="button"
+          className="mobile-nav-toggle"
+          onClick={() => setMenuOpen(!menuOpen)}
+        >
+          ☰
+        </button>
 
-          <Link to="/recommendation" className="pref-link">Recommendations</Link>
-          <Link to="/preferences" className="pref-link">Preferences</Link>
-          <Link to="/login" className="login-link">Login</Link>
+        <div className={`nav-actions ${menuOpen ? 'open' : ''}`}>
+          <ThemeToggle />
+          <button
+            type="button"
+            onClick={handleRefresh}
+            className="btn"
+            disabled={refreshing}
+          >
+            {refreshing ? 'Refreshing...' : '🔄 Refresh'}
+          </button>
+          <Link to="/preferences" className="btn">Preferences</Link>
+          <Link to="/profile" className="btn">Profile</Link>
+          {isLoggedIn ? (
+            <button type="button" onClick={handleLogout} className="btn btn-danger">
+              Logout
+            </button>
+          ) : (
+            <Link to="/login" className="btn btn-primary">
+              Login
+            </Link>
+          )}
         </div>
       </nav>
 
       <header className="hero">
-        <h1>Stay Ahead of the Competition</h1>
-        <p>Real-time contest schedule from all major platforms in one place.</p>
-        <Link to="/recommendation" className="recommend-cta">
-          Get AI Recommendation ✨
-        </Link>
+        <h1>Contest Schedule</h1>
+        <p>Upcoming coding contests from all major competitive programming platforms.</p>
       </header>
 
       <main>
+        {/* Recommendation Feature Card */}
+        <div className="recommendation-banner">
+          <div>
+            <h2>✨ AI Contest Recommendations</h2>
+            <p className="text-muted">Get personalized contest suggestions based on your Codeforces and LeetCode ratings.</p>
+          </div>
+          <Link to="/recommendation" className="btn btn-primary">
+            Get Recommendations →
+          </Link>
+        </div>
 
         {loading ? (
-          <div className="loader-box">
-            <div className="pulse"></div>
+          <div className="loading-state">
+            <p>Loading contests...</p>
           </div>
         ) : error ? (
-          <div className="error-box">
+          <div className="error-state">
             <p>{error}</p>
-            <button onClick={loadContests}>Try again</button>
+            <button type="button" onClick={loadContests} className="btn">
+              Try Again
+            </button>
+          </div>
+        ) : contests.length === 0 ? (
+          <div className="empty-state">
+            <p>No upcoming contests found.</p>
           </div>
         ) : (
-          <div className="grid">
-            {contests.map((c, i) => (
-              <div key={c.id || i} className="card">
-                <span className="badge">{c.platform}</span>
-                <h3>{c.name}</h3>
-                <div className="meta">
-                  <div className="meta-item">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-                    {formatDate(c.startTime)}
-                  </div>
-                  <div className="meta-item">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-                    {Math.floor(c.duration / 60)}h {c.duration % 60}m
-                  </div>
-                </div>
-                <a href={c.url} target="_blank" rel="noreferrer" className="action-btn">
+          <div className="contest-grid">
+            {contests.map((contest, index) => (
+              <div key={contest.id || index} className="contest-card">
+                <span className="platform-badge">{contest.platform}</span>
+                <h2>{contest.name}</h2>
+                <p className="contest-meta">📅 Start: {formatDate(contest.startTime)}</p>
+                <p className="contest-meta">⏳ Duration: {formatDuration(contest.duration)}</p>
+                <a
+                  href={contest.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="btn btn-primary"
+                >
                   Open Contest
                 </a>
               </div>
@@ -91,6 +171,6 @@ const Home = () => {
       </main>
     </div>
   );
-};
+}
 
 export default Home;

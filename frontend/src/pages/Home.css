@@ -1,306 +1,97 @@
-.nav {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 2.5rem 0;
-}
-
-/* New logo component handles these styles */
-
-.nav-actions {
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
-}
-
-.refresh-btn {
-  width: 44px;
-  height: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 12px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  color: white;
-  backdrop-filter: blur(10px);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.refresh-btn:hover {
-  background: rgba(255, 255, 255, 0.05);
-  transform: rotate(180deg);
-  border-color: var(--p-500);
-}
-
-.login-link {
-  font-weight: 700;
-  color: var(--text);
-  padding: 0.75rem 1.5rem;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid var(--border);
-  transition: all 0.3s ease;
-}
-
-.pref-link {
-  font-weight: 600;
-  color: var(--text-muted);
-  transition: all 0.3s ease;
-  padding: 0.5rem;
-}
-
-.pref-link:hover {
-  color: white;
-  transform: translateY(-1px);
-}
-
-.login-link:hover {
-  background: var(--gradient-primary);
-  border-color: transparent;
-  box-shadow: var(--glow-primary);
-  transform: translateY(-2px);
-}
-
 .hero {
-  padding: 3rem 0 2rem;
   text-align: center;
+  margin-bottom: 2rem;
 }
 
 .hero h1 {
-  font-family: 'Outfit', sans-serif;
-  font-size: 2.5rem;
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  line-height: 1.2;
-  margin-bottom: 0.75rem;
-  background: linear-gradient(to bottom, #fff 40%, rgba(255,255,255,0.7) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
 }
 
 .hero p {
   color: var(--text-muted);
-  font-size: 1.1rem;
-  max-width: 600px;
-  margin: 0 auto;
-  font-weight: 500;
 }
 
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-  gap: 2.5rem;
-  padding-bottom: 8rem;
-}
-
-.card {
-  background: var(--surface);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+.recommendation-banner {
+  background: var(--card-bg);
   border: 1px solid var(--border);
-  border-radius: 24px;
-  padding: 2.5rem;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  overflow: hidden;
-}
-
-.card::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.05) 0%, transparent 100%);
-  z-index: -1;
-}
-
-.card:hover {
-  transform: translateY(-12px);
-  border-color: var(--p-500);
-  box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.5), 0 0 20px rgba(99, 102, 241, 0.1);
-}
-
-.badge {
-  font-size: 0.8rem;
-  font-weight: 800;
-  text-transform: uppercase;
-  color: white;
-  background: var(--gradient-primary);
-  padding: 6px 14px;
-  border-radius: 8px;
-  width: fit-content;
-  margin-bottom: 1.25rem;
-  box-shadow: var(--glow-primary);
-}
-
-.card h3 {
-  font-family: 'Outfit', sans-serif;
-  font-size: 1.5rem;
-  margin-bottom: 1.25rem;
-  line-height: 1.2;
-  font-weight: 700;
-}
-
-.meta {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
   margin-bottom: 2rem;
-}
-
-.meta-item {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 0.875rem;
-  font-size: 1rem;
-  color: var(--text-muted);
-  font-weight: 500;
+  gap: 1.5rem;
 }
 
-.meta-item svg {
-  width: 20px;
-  color: var(--p-500);
+.recommendation-banner h2 {
+  font-size: 1.2rem;
+  margin-bottom: 0.25rem;
 }
 
-.action-btn {
-  margin-top: auto;
-  background: white;
-  color: black;
-  padding: 1rem;
+.loading-state,
+.error-state,
+.empty-state {
   text-align: center;
-  border-radius: 14px;
-  font-weight: 800;
-  font-size: 1rem;
-  transition: all 0.3s;
+  padding: 3rem 1rem;
 }
 
-.action-btn:hover {
-  background: var(--gradient-primary);
-  color: white;
-  transform: scale(1.02);
-  box-shadow: var(--glow-primary);
+.error-state p {
+  color: var(--danger);
+  margin-bottom: 1rem;
 }
 
-.loader-box {
+.contest-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+.contest-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
   display: flex;
-  justify-content: center;
-  padding: 10rem 0;
+  flex-direction: column;
+  gap: 0.75rem;
 }
 
-.pulse {
-  width: 64px;
-  height: 64px;
-  background: var(--gradient-primary);
-  border-radius: 50%;
-  animation: pulse 1.5s infinite cubic-bezier(0.4, 0, 0.6, 1);
-  box-shadow: var(--glow-primary);
+.platform-badge {
+  display: inline-block;
+  background: var(--primary);
+  color: white;
+  font-size: 0.8rem;
+  font-weight: bold;
+  padding: 0.25rem 0.6rem;
+  border-radius: 6px;
+  width: fit-content;
 }
 
-@keyframes pulse {
-  0% { transform: scale(0.85); opacity: 0.5; }
-  50% { transform: scale(1.1); opacity: 0.8; }
-  100% { transform: scale(0.85); opacity: 0.5; }
+.contest-card h2 {
+  font-size: 1.15rem;
+  line-height: 1.3;
 }
 
-@media (max-width: 768px) {
-  .hero h1 { font-size: 3rem; }
-  .grid { grid-template-columns: 1fr; }
+.contest-meta {
+  color: var(--text-muted);
+  font-size: 0.9rem;
 }
 
-.recommend-cta {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    margin-top: 2rem;
-    padding: 0.875rem 2rem;
-    background: var(--gradient-primary);
-    color: white;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 14px;
-    font-weight: 700;
-    font-family: 'Outfit', sans-serif;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: var(--glow-primary);
-    text-transform: uppercase;
-    letter-spacing: 0.03em;
+.contest-card .btn {
+  margin-top: auto;
 }
 
-.recommend-cta:hover {
-    transform: translateY(-4px) scale(1.02);
-    box-shadow: var(--glow-primary), 0 10px 20px rgba(99, 102, 241, 0.3);
-    border-color: rgba(255, 255, 255, 0.25);
-    filter: brightness(1.1);
-}
-
-.recommend-cta:disabled {
-    opacity: 0.7;
-    cursor: wait;
-    transform: none;
-}
-
-.recommendations-row {
-    margin: 4rem 0 6rem;
-    padding: 3rem;
-    background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
-    border: 1px solid rgba(99, 102, 241, 0.2);
-    border-radius: 32px;
-    backdrop-filter: blur(16px);
-}
-
-.recommendations-row h2 {
-    font-family: 'Outfit', sans-serif;
-    font-size: 1.75rem;
-    margin-bottom: 2rem;
-    text-align: center;
-}
-
-.recommendation-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 1.5rem;
-}
-
-.rec-card {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 2rem;
-    border-radius: 20px;
-    transition: all 0.3s ease;
-}
-
-.rec-card:hover {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: var(--p-500);
-}
-
-.rec-card h4 {
-    color: var(--p-400);
-    margin-bottom: 0.75rem;
-    font-size: 1.2rem;
-}
-
-.rec-card p {
-    font-size: 0.95rem;
-    color: var(--text-muted);
-    line-height: 1.6;
-}
-
-.no-rec {
-    grid-column: 1 / -1;
-    text-align: center;
-    color: var(--text-muted);
-    padding: 2rem;
-}
-
-.no-rec a {
-    color: var(--p-400);
-    text-decoration: underline;
+/* Mobile Contest Cards & Banner: Narrower with comfortable horizontal spacing */
+@media (max-width: 600px) {
+  .recommendation-banner {
+    flex-direction: column;
+    align-items: flex-start;
+    margin: 0 1.25rem 2rem 1.25rem;
+  }
+  .contest-grid {
+    grid-template-columns: 1fr;
+    padding: 0 1.25rem;
+  }
 }

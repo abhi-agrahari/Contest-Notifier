@@ -1,8 +1,12 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
+const request = (url, options = {}) => {
+  return fetch(url, { ...options, credentials: 'include' });
+};
 
 export const fetchContests = async () => {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/contests`);
+    const response = await request(`${API_BASE_URL}/api/contests`);
     if (!response.ok) throw new Error('Could not fetch contests from the server.');
     return await response.json();
   } catch (error) {
@@ -11,9 +15,39 @@ export const fetchContests = async () => {
   }
 };
 
+export const refreshContests = async () => {
+  try {
+    const response = await request(`${API_BASE_URL}/api/contests/refresh`, {
+      method: 'POST',
+      credentials: 'include'
+    });
+    if (!response.ok) throw new Error('Could not refresh contests.');
+    return response.text();
+  } catch (error) {
+    console.error('API Error:', error);
+    throw error;
+  }
+};
+
+export const logoutUser = async () => {
+  try {
+    const response = await request(`${API_BASE_URL}/logout`, {
+      method: 'POST',
+      credentials: 'include'
+    });
+    if (!response.ok && response.status !== 401) {
+      throw new Error('Failed to logout');
+    }
+    return true;
+  } catch (error) {
+    console.error('API Error:', error);
+    throw error;
+  }
+};
+
 export const fetchUserPreferences = async () => {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/preferences`, {
+    const response = await request(`${API_BASE_URL}/api/preferences`, {
         // Assuming credentials/cookies are handled by the browser
         // If not using cookies (e.g. JWT in Header), this would need more work.
         // But the backend uses @AuthenticationPrincipal which usually implies session/cookie or configured OAuth2.
@@ -32,7 +66,7 @@ export const fetchUserPreferences = async () => {
 
 export const saveUserPreference = async (preference) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/preferences`, {
+    const response = await request(`${API_BASE_URL}/api/preferences`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(preference),
@@ -48,7 +82,7 @@ export const saveUserPreference = async (preference) => {
 
 export const deleteUserPreference = async (platform) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/preferences/${platform}`, {
+    const response = await request(`${API_BASE_URL}/api/preferences/${platform}`, {
       method: 'DELETE',
       credentials: 'include'
     });
@@ -62,7 +96,7 @@ export const deleteUserPreference = async (platform) => {
 
 export const fetchNotificationSetting = async () => {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/preferences/notifications`, {
+    const response = await request(`${API_BASE_URL}/api/preferences/notifications`, {
       credentials: 'include'
     });
     if (!response.ok) throw new Error('Failed to fetch notification setting');
@@ -75,7 +109,7 @@ export const fetchNotificationSetting = async () => {
 
 export const updateNotificationSetting = async (enabled) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/preferences/notifications`, {
+    const response = await request(`${API_BASE_URL}/api/preferences/notifications`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(enabled),
@@ -91,7 +125,7 @@ export const updateNotificationSetting = async (enabled) => {
 
 export const updateUserHandles = async (handles) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/user/handles`, {
+    const response = await request(`${API_BASE_URL}/api/user/handles`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(handles),
@@ -107,7 +141,7 @@ export const updateUserHandles = async (handles) => {
 
 export const fetchUserProfile = async () => {
     try {
-        const response = await fetch(`${API_BASE_URL}/api/user/me`, {
+        const response = await request(`${API_BASE_URL}/api/user/me`, {
             credentials: 'include'
         });
         if (!response.ok) {
@@ -123,7 +157,7 @@ export const fetchUserProfile = async () => {
 
 export const fetchRecommendations = async () => {
     try {
-        const response = await fetch(`${API_BASE_URL}/api/recommendation`, {
+        const response = await request(`${API_BASE_URL}/api/recommendation`, {
             credentials: 'include'
         });
         if (!response.ok) {
@@ -139,7 +173,7 @@ export const fetchRecommendations = async () => {
 
 export const fetchCodeforcesRating = async (handle) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/rating/codeforces/${handle}`, {
+    const response = await request(`${API_BASE_URL}/api/rating/codeforces/${handle}`, {
       credentials: 'include'
     });
     if (!response.ok) throw new Error('Failed to fetch Codeforces rating');
@@ -152,7 +186,7 @@ export const fetchCodeforcesRating = async (handle) => {
 
 export const fetchLeetCodeRating = async (username) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/rating/leetcode/${username}`, {
+    const response = await request(`${API_BASE_URL}/api/rating/leetcode/${username}`, {
       credentials: 'include'
     });
     if (!response.ok) throw new Error('Failed to fetch LeetCode rating');
