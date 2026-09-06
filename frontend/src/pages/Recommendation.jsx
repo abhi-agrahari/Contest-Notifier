@@ -5,51 +5,46 @@ import {
   fetchContests,
   fetchRecommendations,
   fetchCodeforcesRating,
-  fetchLeetCodeRating
+  fetchLeetCodeRating,
+  logoutUser
 } from '../api/api';
 import Logo from '../components/Logo';
+import ThemeToggle from '../components/ThemeToggle';
 import './Recommendation.css';
 
-const Recommendation = () => {
+function Recommendation() {
   const [loading, setLoading] = useState(true);
-  const [loadingStep, setLoadingStep] = useState(0);
   const [profile, setProfile] = useState(null);
   const [cfRating, setCfRating] = useState(null);
   const [lcRating, setLcRating] = useState(null);
   const [contests, setContests] = useState([]);
   const [recommendations, setRecommendations] = useState(null);
   const [error, setError] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   
   const navigate = useNavigate();
 
-  const loadingMessages = [
-    'Connecting to database...',
-    'Fetching your coding profiles...',
-    'Retrieving ratings from Codeforces & LeetCode...',
-    'Loading upcoming contest schedule...',
-    'Generating AI Recommendations via Gemini...',
-    'Polishing your personalized dashboard...'
-  ];
-
-  // Cycle loading messages for a premium feel
   useEffect(() => {
-    if (!loading) return;
-    const interval = setInterval(() => {
-      setLoadingStep((prev) => (prev < loadingMessages.length - 1 ? prev + 1 : prev));
-    }, 1500);
-    return () => clearInterval(interval);
-  }, [loading]);
-
-  useEffect(() => {
-    loadData();
+    checkAuthStatus();
   }, []);
+
+  const checkAuthStatus = async () => {
+    try {
+      await fetchUserProfile();
+      setIsLoggedIn(true);
+      loadData();
+    } catch {
+      setIsLoggedIn(false);
+      navigate('/login');
+    }
+  };
 
   const loadData = async () => {
     try {
       setLoading(true);
       setError(null);
 
-      // 1. Fetch profile and upcoming contests
       const [userProfile, allContests] = await Promise.all([
         fetchUserProfile(),
         fetchContests()
@@ -58,16 +53,14 @@ const Recommendation = () => {
       setProfile(userProfile);
       setContests(allContests);
 
-      // Checking if handles are missing
       const hasCf = userProfile.codeforcesHandle && userProfile.codeforcesHandle.trim() !== '';
       const hasLc = userProfile.leetcodeHandle && userProfile.leetcodeHandle.trim() !== '';
 
       if (!hasCf || !hasLc) {
         setLoading(false);
-        return; // Page will display a "please set handles" prompt
+        return;
       }
 
-      // 2. Fetch recommendations and user ratings in parallel
       const ratingsAndRecs = await Promise.allSettled([
         fetchCodeforcesRating(userProfile.codeforcesHandle),
         fetchLeetCodeRating(userProfile.leetcodeHandle),
@@ -86,7 +79,6 @@ const Recommendation = () => {
       } else {
         throw new Error('Failed to generate recommendations. Please try again.');
       }
-
     } catch (err) {
       if (err.message === 'Unauthorized') {
         navigate('/login');
@@ -98,19 +90,27 @@ const Recommendation = () => {
     }
   };
 
-  const formatDate = (date) => {
-    return new Date(date).toLocaleDateString(undefined, {
-      weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+  const handleLogout = async () => {
+    try {
+      await logoutUser();
+    } finally {
+      setIsLoggedIn(false);
+      navigate('/login');
+    }
+  };
+
+  const formatDate = (dateStr) => {
+    return new Date(dateStr).toLocaleString(undefined, {
+      month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
     });
   };
 
-  const getFormatDuration = (durationMins) => {
+  const formatDuration = (durationMins) => {
     const hrs = Math.floor(durationMins / 60);
     const mins = durationMins % 60;
     return `${hrs}h ${mins}m`;
   };
 
-  // Match AI recommended contest to actual contest data from API
   const getMatchedContest = (recommendedName) => {
     if (!recommendedName) return null;
     return contests.find(c => 
@@ -126,140 +126,116 @@ const Recommendation = () => {
   return (
     <div className="container">
       <nav className="nav">
-        <Link to="/">
-          <Logo size={40} />
+        <Link to="/" className="nav-brand">
+          <Logo />
         </Link>
-        <div className="nav-actions">
-          <Link to="/" className="back-link">Back to Home</Link>
+        <button 
+          type="button" 
+          className="mobile-nav-toggle" 
+          onClick={() => setMenuOpen(!menuOpen)}
+        >
+          ☰
+        </button>
+        <div className={`nav-actions ${menuOpen ? 'open' : ''}`}>
+          <ThemeToggle />
+          <Link to="/" className="btn">Back to Home</Link>
+          <Link to="/profile" className="btn">Profile</Link>
+          {isLoggedIn ? (
+            <button type="button" onClick={handleLogout} className="btn btn-danger">Logout</button>
+          ) : (
+            <Link to="/login" className="btn btn-primary">Login</Link>
+          )}
         </div>
       </nav>
 
       <header className="hero">
-        <h1 className="title-gradient">AI Contest Recommendations</h1>
-        <p className="subtitle">Custom competitive programming recommendations curated by Gemini based on your live statistics.</p>
+        <h1>AI Contest Recommendations</h1>
+        <p>Personalized contest recommendations based on your Codeforces & LeetCode statistics.</p>
       </header>
 
       <main className="rec-main">
         {loading ? (
-          <div className="rec-loader-container">
-            <div className="pulse-loader"></div>
-            <p className="loading-text">{loadingMessages[loadingStep]}</p>
+          <div className="loading-state">
+            <p>Loading AI recommendations...</p>
           </div>
         ) : error ? (
-          <div className="rec-error-card">
-            <div className="error-icon">⚠️</div>
-            <h3>Unable to Curate Recommendations</h3>
+          <div className="error-state">
             <p>{error}</p>
-            <button onClick={loadData} className="retry-btn">Try Again</button>
+            <button type="button" onClick={loadData} className="btn">Try Again</button>
           </div>
         ) : !hasHandlesConfigured ? (
           <div className="no-handles-card">
-            <div className="handle-badge-icons">
-              <span className="platform-icon cf">CF</span>
-              <span className="platform-icon lc">LC</span>
-            </div>
             <h2>Configure Your Coding Handles</h2>
-            <p>
-              To offer personalized contest recommendations, our AI model needs to evaluate your rating history and recent performances on Codeforces and LeetCode.
-            </p>
-            <div className="cta-group">
-              <Link to="/preferences" className="setup-handles-btn">Set Up Handles in Preferences</Link>
-            </div>
+            <p>Please set your Codeforces and LeetCode usernames in your Profile or Preferences to view custom recommendations.</p>
+            <Link to="/profile" className="btn btn-primary">Set Up Handles in Profile</Link>
           </div>
         ) : (
-          <>
-            {/* User Statistics Dashboard */}
-            <section className="stats-dashboard">
-              <h2 className="section-title">Your Developer Profile</h2>
+          <div>
+            <section className="stats-section">
+              <h2>Your Profile Stats</h2>
               <div className="stats-grid">
-                {/* Codeforces Stats */}
-                <div className="stat-card codeforces-card">
-                  <div className="stat-header">
-                    <span className="platform-tag cf-tag">Codeforces</span>
-                    <span className="handle-txt">@{profile.codeforcesHandle}</span>
-                  </div>
+                <div className="stat-card">
+                  <h3>Codeforces (@{profile.codeforcesHandle})</h3>
                   {cfRating ? (
-                    <div className="rating-display">
-                      <span className="label">Current Rating</span>
-                      <span className="value cf-color">{cfRating.currentRating || 'N/A'}</span>
-                      <span className="label max-label">Max Rating: {cfRating.maxRating || 'N/A'}</span>
+                    <div>
+                      <p><strong>Current Rating:</strong> {cfRating.currentRating || 'N/A'}</p>
+                      <p><strong>Max Rating:</strong> {cfRating.maxRating || 'N/A'}</p>
                     </div>
                   ) : (
-                    <div className="rating-display-loading">Loading live profile...</div>
+                    <p className="text-muted">Loading live rating...</p>
                   )}
                 </div>
 
-                {/* LeetCode Stats */}
-                <div className="stat-card leetcode-card">
-                  <div className="stat-header">
-                    <span className="platform-tag lc-tag">LeetCode</span>
-                    <span className="handle-txt">@{profile.leetcodeHandle}</span>
-                  </div>
+                <div className="stat-card">
+                  <h3>LeetCode (@{profile.leetcodeHandle})</h3>
                   {lcRating ? (
-                    <div className="rating-display">
-                      <span className="label">Current Rating</span>
-                      <span className="value lc-color">{lcRating.currentRating || 'N/A'}</span>
-                      <span className="label max-label">Max Rating: {lcRating.maxRating || 'N/A'}</span>
+                    <div>
+                      <p><strong>Current Rating:</strong> {lcRating.currentRating || 'N/A'}</p>
+                      <p><strong>Max Rating:</strong> {lcRating.maxRating || 'N/A'}</p>
                     </div>
                   ) : (
-                    <div className="rating-display-loading">Loading live profile...</div>
+                    <p className="text-muted">Loading live rating...</p>
                   )}
                 </div>
               </div>
             </section>
 
-            {/* AI Curations */}
-            <section className="curated-section">
-              <h2 className="section-title">AI Personalized Recommendations</h2>
+            <section className="rec-section">
+              <h2>Recommended Contests</h2>
               {recommendations && recommendations.length > 0 ? (
-                <div className="curated-list">
+                <div className="rec-list">
                   {recommendations.map((rec, index) => {
                     const matched = getMatchedContest(rec.contest);
                     return (
-                      <div key={index} className="recommendation-item">
-                        <div className="rec-info-side">
-                          <div className="rec-badge-row">
-                            <span className="curated-badge">Recommendation #{index + 1}</span>
-                            {matched && <span className="platform-badge">{matched.platform}</span>}
-                          </div>
+                      <div key={index} className="rec-card">
+                        <div className="rec-details">
+                          <span className="rec-number">#{index + 1}</span>
                           <h3>{rec.contest}</h3>
-                          
-                          <div className="ai-reason-bubble">
-                            <span className="ai-sparkle">✨</span>
-                            <div className="ai-text">
-                              <strong>AI Mentor:</strong> {rec.reason}
-                            </div>
-                          </div>
+                          <p className="rec-reason">💡 <strong>AI Mentor:</strong> {rec.reason}</p>
                         </div>
 
-                        <div className="rec-meta-side">
+                        <div className="rec-action">
                           {matched ? (
-                            <>
-                              <div className="meta-row">
-                                <span className="meta-label">Starts</span>
-                                <span className="meta-value">{formatDate(matched.startTime)}</span>
-                              </div>
-                              <div className="meta-row">
-                                <span className="meta-label">Duration</span>
-                                <span className="meta-value">{getFormatDuration(matched.duration)}</span>
-                              </div>
+                            <div>
+                              <p className="text-muted">Start: {formatDate(matched.startTime)}</p>
+                              <p className="text-muted">Duration: {formatDuration(matched.duration)}</p>
                               <a
                                 href={matched.url}
                                 target="_blank"
                                 rel="noreferrer"
-                                className="register-btn"
+                                className="btn btn-primary"
+                                style={{ marginTop: '0.5rem', display: 'inline-block' }}
                               >
-                                View / Register
+                                View Contest
                               </a>
-                            </>
+                            </div>
                           ) : (
-                            <div className="no-match-meta">
-                              <p>Contest details loaded by AI recommendations engine.</p>
+                            <div>
                               <a 
                                 href={`https://www.google.com/search?q=${encodeURIComponent(rec.contest)}`}
                                 target="_blank"
                                 rel="noreferrer"
-                                className="search-btn"
+                                className="btn"
                               >
                                 Search Contest
                               </a>
@@ -271,16 +247,16 @@ const Recommendation = () => {
                   })}
                 </div>
               ) : (
-                <div className="no-recommendations-box">
-                  <p>Our AI could not find any suitable upcoming contests for your skill profile at this moment. Stay tuned!</p>
+                <div className="empty-state">
+                  <p>No recommendations available right now.</p>
                 </div>
               )}
             </section>
-          </>
+          </div>
         )}
       </main>
     </div>
   );
-};
+}
 
 export default Recommendation;

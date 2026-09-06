@@ -1,489 +1,106 @@
 .rec-main {
   max-width: 900px;
   margin: 0 auto;
-  padding-bottom: 6rem;
+  padding-bottom: 3rem;
 }
 
-/* Page Header Title */
-.title-gradient {
-  font-family: 'Outfit', sans-serif;
-  font-size: 2.8rem;
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  background: linear-gradient(135deg, var(--p-500) 0%, var(--s-600) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  margin-bottom: 0.5rem;
-}
-
-.hero .subtitle {
-  color: var(--text-muted);
-  max-width: 600px;
-  margin: 0 auto;
-  font-size: 1.1rem;
-}
-
-/* Custom Loaders */
-.rec-loader-container {
+.no-handles-card {
+  text-align: center;
+  padding: 2rem;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  padding: 8rem 0;
-  text-align: center;
-}
-
-.pulse-loader {
-  width: 64px;
-  height: 64px;
-  background: var(--gradient-primary);
-  border-radius: 50%;
-  animation: pulse 1.5s infinite cubic-bezier(0.4, 0, 0.6, 1);
-  box-shadow: var(--glow-primary);
-  margin-bottom: 2rem;
-}
-
-.loading-text {
-  font-weight: 600;
-  color: var(--text-muted);
-  font-size: 1.1rem;
-  min-height: 24px;
-}
-
-/* Error/Retry State */
-.rec-error-card {
-  background: rgba(239, 68, 68, 0.05);
-  border: 1px solid rgba(239, 68, 68, 0.2);
-  border-radius: 24px;
-  padding: 3rem;
-  text-align: center;
-  backdrop-filter: blur(16px);
-}
-
-.error-icon {
-  font-size: 3rem;
-  margin-bottom: 1rem;
-}
-
-.rec-error-card h3 {
-  font-family: 'Outfit', sans-serif;
-  font-size: 1.5rem;
-  margin-bottom: 0.75rem;
-  color: #f87171;
-}
-
-.rec-error-card p {
-  color: var(--text-muted);
-  margin-bottom: 2rem;
-}
-
-.retry-btn {
-  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-  color: white;
-  padding: 0.75rem 2rem;
-  border-radius: 12px;
-  font-weight: 700;
-  font-size: 1rem;
-  transition: all 0.3s;
-  box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
-}
-
-.retry-btn:hover {
-  transform: translateY(-2px);
-  filter: brightness(1.1);
-}
-
-/* No Handles State Box */
-.no-handles-card {
-  background: var(--surface);
-  backdrop-filter: blur(16px);
-  border: 1px solid var(--border);
-  border-radius: 28px;
-  padding: 4rem 3rem;
-  text-align: center;
-  max-width: 600px;
-  margin: 3rem auto;
-}
-
-.handle-badge-icons {
-  display: flex;
-  justify-content: center;
   gap: 1rem;
-  margin-bottom: 1.5rem;
+  max-width: 500px;
+  margin: 2rem auto;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
 }
 
-.platform-icon {
-  display: inline-block;
-  padding: 8px 16px;
-  border-radius: 10px;
-  font-weight: 800;
-  font-size: 0.9rem;
-  color: white;
+.stats-section,
+.rec-section {
+  margin-bottom: 2rem;
 }
 
-.platform-icon.cf {
-  background: #3b82f6; /* Codeforces Blue */
-}
-
-.platform-icon.lc {
-  background: #f59e0b; /* LeetCode Yellow */
-}
-
-.no-handles-card h2 {
-  font-family: 'Outfit', sans-serif;
-  font-size: 1.75rem;
+.stats-section h2,
+.rec-section h2 {
+  font-size: 1.3rem;
   margin-bottom: 1rem;
-}
-
-.no-handles-card p {
-  color: var(--text-muted);
-  line-height: 1.6;
-  margin-bottom: 2.5rem;
-}
-
-.setup-handles-btn {
-  background: var(--gradient-primary);
-  color: white;
-  padding: 1rem 2rem;
-  border-radius: 16px;
-  font-weight: 700;
-  font-size: 1rem;
-  box-shadow: var(--glow-primary);
-  display: inline-block;
-  transition: all 0.3s ease;
-}
-
-.setup-handles-btn:hover {
-  transform: translateY(-3px) scale(1.02);
-  box-shadow: 0 10px 24px rgba(99, 102, 241, 0.4);
-}
-
-/* User Statistics Dashboard section */
-.stats-dashboard {
-  margin-bottom: 4rem;
-}
-
-.section-title {
-  font-family: 'Outfit', sans-serif;
-  font-size: 1.5rem;
-  font-weight: 800;
-  margin-bottom: 1.5rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--text-muted);
 }
 
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
 }
 
 .stat-card {
-  background: var(--surface);
-  backdrop-filter: blur(16px);
+  background: var(--card-bg);
   border: 1px solid var(--border);
-  border-radius: 24px;
-  padding: 2rem;
-  position: relative;
-  overflow: hidden;
-  transition: all 0.3s ease;
-}
-
-.stat-card::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  pointer-events: none;
-  filter: blur(50px);
-  opacity: 0.3;
-}
-
-.codeforces-card::after {
-  background: #3b82f6;
-}
-
-.leetcode-card::after {
-  background: #f59e0b;
-}
-
-.stat-card:hover {
-  transform: translateY(-5px);
-  border-color: var(--p-500);
-}
-
-.stat-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1.5rem;
-}
-
-.platform-tag {
-  font-size: 0.8rem;
-  font-weight: 800;
-  text-transform: uppercase;
-  padding: 4px 10px;
-  border-radius: 6px;
-  color: white;
-}
-
-.cf-tag {
-  background: rgba(59, 130, 246, 0.2);
-  color: #93c5fd;
-  border: 1px solid rgba(59, 130, 246, 0.3);
-}
-
-.lc-tag {
-  background: rgba(245, 158, 11, 0.2);
-  color: #fde047;
-  border: 1px solid rgba(245, 158, 11, 0.3);
-}
-
-.handle-txt {
-  font-weight: 600;
-  font-size: 0.95rem;
-  color: var(--text-muted);
-}
-
-.rating-display {
-  display: flex;
-  flex-direction: column;
-}
-
-.rating-display .label {
-  font-size: 0.85rem;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  font-weight: 600;
-}
-
-.rating-display .value {
-  font-family: 'Outfit', sans-serif;
-  font-size: 2.2rem;
-  font-weight: 800;
-  line-height: 1.1;
-  margin: 0.25rem 0;
-}
-
-.cf-color {
-  color: #93c5fd;
-}
-
-.lc-color {
-  color: #fde047;
-}
-
-.rating-display .max-label {
-  font-size: 0.8rem;
-  color: var(--text-muted);
-  margin-top: 0.25rem;
-}
-
-.rating-display-loading {
-  font-style: italic;
-  color: var(--text-muted);
-}
-
-/* Recommendations List Card Section */
-.curated-list {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-}
-
-.recommendation-item {
-  background: var(--surface);
-  backdrop-filter: blur(16px);
-  border: 1px solid var(--border);
-  border-radius: 24px;
-  padding: 2.5rem;
-  display: flex;
-  justify-content: space-between;
-  gap: 2.5rem;
-  transition: all 0.3s ease;
-  position: relative;
-}
-
-.recommendation-item::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.03) 0%, transparent 100%);
-  pointer-events: none;
-}
-
-.recommendation-item:hover {
-  border-color: var(--p-500);
-  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.4), 0 0 20px rgba(99, 102, 241, 0.05);
-}
-
-.rec-info-side {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-.rec-badge-row {
-  display: flex;
-  gap: 0.75rem;
-  align-items: center;
-  margin-bottom: 0.75rem;
-}
-
-.curated-badge {
-  font-size: 0.75rem;
-  font-weight: 800;
-  text-transform: uppercase;
-  color: var(--p-500);
-  background: rgba(99, 102, 241, 0.1);
-  padding: 4px 10px;
-  border-radius: 6px;
-}
-
-.platform-badge {
-  font-size: 0.75rem;
-  font-weight: 800;
-  text-transform: uppercase;
-  color: var(--text);
-  background: rgba(255, 255, 255, 0.1);
-  padding: 4px 10px;
-  border-radius: 6px;
-}
-
-.rec-info-side h3 {
-  font-family: 'Outfit', sans-serif;
-  font-size: 1.6rem;
-  font-weight: 800;
-  margin-bottom: 1.25rem;
-  line-height: 1.2;
-}
-
-.ai-reason-bubble {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: var(--radius);
   padding: 1.25rem;
-  border-radius: 16px;
-  display: flex;
-  gap: 0.75rem;
-  margin-top: auto;
 }
 
-.ai-sparkle {
-  font-size: 1.2rem;
-  line-height: 1;
+.stat-card h3 {
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
 }
 
-.ai-text {
-  font-size: 0.95rem;
-  color: var(--text-muted);
-  line-height: 1.6;
-}
-
-.rec-meta-side {
-  width: 260px;
-  border-left: 1px solid var(--border);
-  padding-left: 2rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 1.25rem;
-}
-
-.meta-row {
-  display: flex;
-  flex-direction: column;
-}
-
-.meta-label {
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--text-muted);
-  font-weight: 700;
-}
-
-.meta-value {
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: var(--text);
-}
-
-.register-btn {
-  background: white;
-  color: black;
-  font-weight: 800;
-  font-size: 0.95rem;
-  padding: 0.85rem;
-  border-radius: 12px;
-  text-align: center;
-  transition: all 0.3s ease;
-  margin-top: 1rem;
-}
-
-.register-btn:hover {
-  background: var(--gradient-primary);
-  color: white;
-  transform: translateY(-2px);
-  box-shadow: var(--glow-primary);
-}
-
-.no-match-meta {
-  text-align: center;
-  color: var(--text-muted);
-  font-size: 0.85rem;
+.rec-list {
   display: flex;
   flex-direction: column;
   gap: 1rem;
 }
 
-.search-btn {
-  background: rgba(255, 255, 255, 0.05);
+.rec-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1.5rem;
+  background: var(--card-bg);
   border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+}
+
+.rec-details {
+  flex: 1;
+}
+
+.rec-number {
+  font-size: 0.8rem;
+  font-weight: bold;
+  background: var(--primary);
   color: white;
-  padding: 0.85rem;
-  border-radius: 12px;
-  font-weight: 700;
-  text-align: center;
-  transition: all 0.3s;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  display: inline-block;
+  margin-bottom: 0.5rem;
 }
 
-.search-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: var(--text-muted);
+.rec-details h3 {
+  font-size: 1.15rem;
+  margin-bottom: 0.5rem;
 }
 
-.no-recommendations-box {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  padding: 4rem;
-  border-radius: 20px;
-  text-align: center;
+.rec-reason {
+  font-size: 0.95rem;
   color: var(--text-muted);
-  font-size: 1.1rem;
+  line-height: 1.4;
 }
 
-@media (max-width: 768px) {
-  .stats-grid {
-    grid-template-columns: 1fr;
-  }
-  .recommendation-item {
+.rec-action {
+  text-align: right;
+  min-width: 180px;
+}
+
+@media (max-width: 650px) {
+  .rec-card {
     flex-direction: column;
-    padding: 2rem;
   }
-  .rec-meta-side {
-    width: 100%;
-    border-left: none;
-    border-top: 1px solid var(--border);
-    padding-left: 0;
-    padding-top: 2rem;
+  .rec-action {
+    text-align: left;
+    min-width: auto;
   }
 }

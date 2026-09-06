@@ -3,85 +3,69 @@ import { Link, useNavigate } from 'react-router-dom';
 import { 
   fetchUserPreferences, 
   saveUserPreference, 
-  deleteUserPreference, 
   fetchNotificationSetting, 
   updateNotificationSetting,
   fetchUserProfile,
-  updateUserHandles
+  logoutUser
 } from '../api/api';
 import Logo from '../components/Logo';
+import ThemeToggle from '../components/ThemeToggle';
 import './Preference.css';
 
 const PLATFORMS = [
-  'Codeforces', 
-  'LeetCode', 
-  'AtCoder', 
-  'CodeChef', 
-  'GeeksForGeeks', 
-  'HackerEarth', 
-  'HackerRank'
+  'Codeforces', 'LeetCode', 'AtCoder', 'CodeChef', 
+  'GeeksForGeeks', 'HackerEarth', 'HackerRank'
 ];
 
-const Preference = () => {
+function Preference() {
   const [preferences, setPreferences] = useState({});
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
-  const [leetcodeHandle, setLeetcodeHandle] = useState('');
-  const [codeforcesHandle, setCodeforcesHandle] = useState('');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    loadPreferences();
+    loadData();
   }, []);
 
-  const loadPreferences = async () => {
+  const loadData = async () => {
     try {
       setLoading(true);
-      const [data, setting, profile] = await Promise.all([
+      await fetchUserProfile();
+      setIsLoggedIn(true);
+
+      const [prefData, globalSetting] = await Promise.all([
         fetchUserPreferences(),
-        fetchNotificationSetting(),
-        fetchUserProfile()
+        fetchNotificationSetting()
       ]);
       
-      setNotificationsEnabled(setting);
-      setLeetcodeHandle(profile.leetcodeHandle || '');
-      setCodeforcesHandle(profile.codeforcesHandle || '');
-      
+      setNotificationsEnabled(globalSetting);
+
       const prefMap = {};
-      data.forEach(p => {
+      prefData.forEach(p => {
         prefMap[p.platform] = {
           enabled: p.enabled,
           notifyBeforeMinutes: p.notifyBeforeMinutes
         };
       });
       setPreferences(prefMap);
+      setError(null);
     } catch (err) {
       if (err.message === 'Unauthorized') {
         navigate('/login');
       } else {
-        setError(err.message);
+        setError(err.message || 'Failed to load preferences');
       }
     } finally {
       setLoading(false);
     }
   };
 
-  const handleUpdateHandles = async (e) => {
-    e.preventDefault();
-    try {
-      setSaving(true);
-      await updateUserHandles({
-        leetcodeHandle,
-        codeforcesHandle
-      });
-      // Optional: show success message
-    } catch (err) {
-      setError("Failed to update handles");
-    } finally {
-      setSaving(false);
-    }
+  const handleLogout = async () => {
+    try { await logoutUser(); } finally { navigate('/login'); }
   };
 
   const handleGlobalToggle = async () => {
@@ -89,54 +73,20 @@ const Preference = () => {
       setSaving(true);
       const newStatus = await updateNotificationSetting(!notificationsEnabled);
       setNotificationsEnabled(newStatus);
-    } catch (err) {
-      setError("Failed to update notification setting");
+    } catch {
+      setError('Failed to update notification setting');
     } finally {
       setSaving(false);
     }
   };
 
-  const handleToggle = async (platform) => {
-    const isCurrentlyEnabled = preferences[platform]?.enabled || false;
-    const currentMinutes = preferences[platform]?.notifyBeforeMinutes || 30;
-
+  const updatePreference = async (platform, enabled, notifyBeforeMinutes) => {
     try {
       setSaving(true);
-      if (isCurrentlyEnabled) {
-        // Technically we could just disable it, but delete might be cleaner or as per API
-        // For now let's just update it with enabled: false
-        await saveUserPreference({
-          platform,
-          enabled: false,
-          notifyBeforeMinutes: currentMinutes
-        });
-      } else {
-        await saveUserPreference({
-          platform,
-          enabled: true,
-          notifyBeforeMinutes: currentMinutes
-        });
-      }
-      await loadPreferences();
-    } catch (err) {
-      setError("Failed to update preference");
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  const handleMinutesChange = async (platform, minutes) => {
-    const isEnabled = preferences[platform]?.enabled || false;
-    try {
-      setSaving(true);
-      await saveUserPreference({
-        platform,
-        enabled: isEnabled,
-        notifyBeforeMinutes: parseInt(minutes)
-      });
-      await loadPreferences();
-    } catch (err) {
-      setError("Failed to update notification time");
+      await saveUserPreference({ platform, enabled, notifyBeforeMinutes });
+      await loadData();
+    } catch {
+      setError('Failed to update preference');
     } finally {
       setSaving(false);
     }
@@ -145,120 +95,99 @@ const Preference = () => {
   return (
     <div className="container">
       <nav className="nav">
-        <Link to="/">
-          <Logo size={40} />
-        </Link>
-        <div className="nav-actions">
-          <Link to="/" className="back-link">Back to Home</Link>
+        <Link to="/" className="nav-brand"><Logo /></Link>
+        <button type="button" className="mobile-nav-toggle" onClick={() => setMenuOpen(!menuOpen)}>☰</button>
+        <div className={`nav-actions ${menuOpen ? 'open' : ''}`}>
+          <ThemeToggle />
+          <Link to="/" className="btn">Back to Home</Link>
+          <Link to="/profile" className="btn">Profile</Link>
+          {isLoggedIn ? (
+            <button type="button" onClick={handleLogout} className="btn btn-danger">Logout</button>
+          ) : (
+            <Link to="/login" className="btn btn-primary">Login</Link>
+          )}
         </div>
       </nav>
 
       <header className="hero">
-        <h1>Your Preferences</h1>
-        <p>Choose which platforms you want to get notified about and when.</p>
+        <h1>Preferences</h1>
+        <p>Manage contest email notifications and reminder times.</p>
       </header>
 
       <main className="pref-main">
-        {!loading && !error && (
-            <div className="global-toggle-card">
-                <div className="pref-info">
-                    <h3>Email Notifications</h3>
-                    <p>Master switch for all contest email alerts</p>
-                </div>
-                <button 
-                    className={`toggle-btn ${notificationsEnabled ? 'on' : 'off'}`}
-                    onClick={handleGlobalToggle}
-                    disabled={saving}
-                >
-                    {notificationsEnabled ? 'Notifications On' : 'Notifications Off'}
-                </button>
-            </div>
-        )}
-
-        {!loading && !error && (
-            <div className="global-toggle-card developer-handles-card">
-                <div className="pref-info">
-                    <h3>Developer Handles</h3>
-                    <p>Set your handles for personalized recommendations</p>
-                </div>
-                <form onSubmit={handleUpdateHandles} className="handles-form">
-                    <div className="handle-input-group">
-                        <input 
-                            type="text" 
-                            placeholder="Codeforces Handle" 
-                            value={codeforcesHandle}
-                            onChange={(e) => setCodeforcesHandle(e.target.value)}
-                            disabled={saving}
-                        />
-                        <input 
-                            type="text" 
-                            placeholder="LeetCode Username" 
-                            value={leetcodeHandle}
-                            onChange={(e) => setLeetcodeHandle(e.target.value)}
-                            disabled={saving}
-                        />
-                    </div>
-                    <button type="submit" className="save-handles-btn" disabled={saving}>
-                        {saving ? 'Saving...' : 'Save Handles'}
-                    </button>
-                </form>
-            </div>
-        )}
-
         {loading ? (
-          <div className="loader-box">
-            <div className="pulse"></div>
-          </div>
+          <div className="loading-state"><p>Loading preferences...</p></div>
         ) : error ? (
-          <div className="error-box">
+          <div className="error-state">
             <p>{error}</p>
-            <button onClick={loadPreferences}>Try again</button>
+            <button type="button" onClick={loadData} className="btn">Try Again</button>
           </div>
         ) : (
-          <div className="pref-list">
-            {PLATFORMS.map(platform => {
-              const pref = preferences[platform] || { enabled: false, notifyBeforeMinutes: 30 };
-              return (
-                <div key={platform} className={`pref-card ${pref.enabled ? 'active' : ''}`}>
-                  <div className="pref-info">
-                    <h3>{platform}</h3>
-                    <p>{pref.enabled ? 'Notifications Active' : 'Notifications Disabled'}</p>
+          <div>
+            <div className="pref-card global-card">
+              <div>
+                <h3>Email Notifications</h3>
+                <p className="text-muted">Master switch for all contest email alerts</p>
+              </div>
+              <button 
+                type="button"
+                className={`btn ${notificationsEnabled ? 'btn-danger' : 'btn-primary'}`}
+                onClick={handleGlobalToggle}
+                disabled={saving}
+              >
+                {notificationsEnabled ? 'Disable All' : 'Enable All'}
+              </button>
+            </div>
+
+            <h2 className="section-title">Platform Preferences</h2>
+            <div className="pref-list">
+              {PLATFORMS.map(platform => {
+                const pref = preferences[platform] || { enabled: false, notifyBeforeMinutes: 30 };
+                return (
+                  <div key={platform} className="pref-card">
+                    <div>
+                      <h3>{platform}</h3>
+                      <p className="text-muted">
+                        {pref.enabled ? 'Notifications Enabled' : 'Notifications Disabled'}
+                      </p>
+                    </div>
+
+                    <div className="pref-controls">
+                      {pref.enabled && (
+                        <div className="time-select">
+                          <label htmlFor={`select-${platform}`}>Notify before:</label>
+                          <select 
+                            id={`select-${platform}`}
+                            value={pref.notifyBeforeMinutes} 
+                            onChange={(e) => updatePreference(platform, true, parseInt(e.target.value, 10))}
+                            disabled={saving}
+                          >
+                            <option value="5">5 mins</option>
+                            <option value="15">15 mins</option>
+                            <option value="30">30 mins</option>
+                            <option value="60">1 hour</option>
+                          </select>
+                        </div>
+                      )}
+
+                      <button 
+                        type="button"
+                        className={`btn ${pref.enabled ? 'btn-danger' : 'btn-primary'}`}
+                        onClick={() => updatePreference(platform, !pref.enabled, pref.notifyBeforeMinutes)}
+                        disabled={saving}
+                      >
+                        {pref.enabled ? 'Disable' : 'Enable'}
+                      </button>
+                    </div>
                   </div>
-                  
-                  <div className="pref-controls">
-                    {pref.enabled && (
-                      <div className="time-select">
-                        <span>Notify me</span>
-                        <select 
-                          value={pref.notifyBeforeMinutes} 
-                          onChange={(e) => handleMinutesChange(platform, e.target.value)}
-                          disabled={saving}
-                        >
-                          <option value="5">5 mins</option>
-                          <option value="15">15 mins</option>
-                          <option value="30">30 mins</option>
-                          <option value="60">1 hour</option>
-                        </select>
-                        <span>before</span>
-                      </div>
-                    )}
-                    
-                    <button 
-                      className={`toggle-btn ${pref.enabled ? 'on' : 'off'}`}
-                      onClick={() => handleToggle(platform)}
-                      disabled={saving}
-                    >
-                      {pref.enabled ? 'Disable' : 'Enable'}
-                    </button>
-                  </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
         )}
       </main>
     </div>
   );
-};
+}
 
 export default Preference;
